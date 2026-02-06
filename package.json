@@ -1,0 +1,20 @@
+{
+  "name": "make-oss-sdk-apps",
+  "version": "1.0.0",
+  "description": "This is a testing repo used to test workflow during the development of the Github open-source apps project.",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "pull": "read -p \"App name: \" APP && npx make-cli pull --local-dir ./apps/$APP",
+    "push": "read -p \"App name: \" APP && npx make-cli push --local-dir ./apps/$APP",
+    "clone": "read -p \"App name: \" APP && npx make-cli clone $APP --local-dir ./apps/$APP --make-host eu1.make.com",
+    "test:setup": "bash scripts/test-make.sh"
+  },
+  "devDependencies": {
+    "@integromat/oss-schema": "0.0.1",
+    "@sinclair/typebox": "^0.34.41",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "jsonc-parser": "^3.3.1"
+  }
+}

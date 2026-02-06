@@ -1,0 +1,79 @@
+name: Validate Schema
+
+on:
+  pull_request:
+    paths:
+      - "apps/**"
+      - "scripts/validate-app.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/validate-schema.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6
+        with:
+          registry-url: https://registry.npmjs.org
+          node-version: '>=20.0'
+          cache: npm
+
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Determine changed apps
+        id: detect
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+        run: |
+          set -eo pipefail
+          apps=$(bash scripts/detect-changed-apps.sh)
+          if [ -z "$apps" ]; then
+            echo "No app changes detected."
+            echo "apps=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Apps changed: $apps"
+          echo "apps=$apps" >> "$GITHUB_OUTPUT"
+
+      - name: Validate changed apps
+        if: steps.detect.outputs.apps != ''
+        shell: bash
+        run: |
+          set -eo pipefail
+          for app in ${{ steps.detect.outputs.apps }}; do
+            echo "Validating $app"
+            node scripts/validate-app.js "$app"
+          done
+
+      - name: Comment validated apps
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          script: |
+            const apps = `${{ steps.detect.outputs.apps }}`.trim();
+            const list = apps
+              ? `Apps validated:\n- ${apps.split(/\s+/).join('\n- ')}`
+              : 'No app changes detected for this PR.';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: list,
+            });
+
