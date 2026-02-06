@@ -1,0 +1,129 @@
+name: MAKE App Auto Sync
+run-name: MAKE App Auto Sync #${{ github.run_number }}
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  app-auto-sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
+      MAKE_HOST: ${{ secrets.MAKE_HOST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6
+        with:
+          registry-url: https://registry.npmjs.org
+          node-version: '>=20.0'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install Make CLI
+        run: npm install -g @integromat/make-cli@^2.4.7
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Pull apps from MAKE
+        id: pull
+        shell: bash
+        run: |
+          set -eo pipefail
+
+          # Ensure we are on the default branch
+          git fetch --no-tags origin
+          DEFAULT_BRANCH="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
+          DEFAULT_BRANCH=${DEFAULT_BRANCH:-master}
+          git checkout -f "$DEFAULT_BRANCH"
+          git reset --hard "origin/$DEFAULT_BRANCH"
+          git clean -fdx
+
+          echo "Pulling all apps under apps/"
+          if [ ! -d apps ]; then
+            echo "No apps directory found. Nothing to sync."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          changed=false
+          for dir in apps/*; do
+            [ -d "$dir" ] || continue
+            echo "Pulling app in $dir"
+            # Pull latest from MAKE into the local app directory
+            npx make-cli pull --local-dir "$GITHUB_WORKSPACE/$dir" || {
+              echo "WARN: make-cli pull failed for $dir, continuing"
+            }
+          done
+
+          # Detect if any changes occurred in apps/
+          if [ -z "$(git status --porcelain apps)" ]; then
+            echo "No changes detected after pull."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changes detected in apps/ after pull."
+            git status --porcelain
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create or update PR
+        id: cpr
+        if: steps.pull.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676
+        with:
+          token: ${{ github.token }}
+          commit-message: "chore: sync apps from MAKE"
+          title: "MAKE App auto sync"
+          body: |
+            Automated synchronization of apps using Make CLI.
+            If this PR is not approved/merged, subsequent scheduled runs will update this PR instead of creating a duplicate.
+          branch: chore/make-app-auto-sync
+          labels: |
+            automation
+            make-sync
+
+      - name: Auto-merge PR
+        if: steps.cpr.outputs.pull-request-operation == 'created' || steps.cpr.outputs.pull-request-operation == 'updated'
+        run: |
+          gh pr merge "${{ steps.cpr.outputs.pull-request-number }}" --merge --auto
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: No-op (no changes)
+        if: steps.pull.outputs.changed != 'true'
+        run: |
+          echo "No changes to sync. Skipping PR creation."
+          echo "### :sleeping: No changes detected" >> $GITHUB_STEP_SUMMARY
+          echo "All apps are up to date." >> $GITHUB_STEP_SUMMARY
+
+      - name: Update Run Name
+        if: always()
+        run: |
+          if [ "${{ steps.pull.outputs.changed }}" == "true" ]; then
+            if [ "${{ steps.cpr.outputs.pull-request-number }}" ]; then
+              TITLE="MAKE App Auto Sync: PR ${{ steps.cpr.outputs.pull-request-operation }} #${{ steps.cpr.outputs.pull-request-number }}"
+              echo "### :rocket: PR ${{ steps.cpr.outputs.pull-request-operation }}" >> $GITHUB_STEP_SUMMARY
+              echo "[PR #${{ steps.cpr.outputs.pull-request-number }}](${{ steps.cpr.outputs.pull-request-url }})" >> $GITHUB_STEP_SUMMARY
+            else
+              TITLE="MAKE App Auto Sync: Changes detected (No PR)"
+            fi
+          else
+            TITLE="MAKE App Auto Sync: No changes"
+          fi
+          gh run edit ${{ github.run_id }} --title "$TITLE" || echo "gh run edit not supported or failed"
+        env:
+          GH_TOKEN: ${{ github.token }}

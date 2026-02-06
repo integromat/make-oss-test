@@ -1,0 +1,9 @@
+[
+	// Defines "id" as mandatory module input parameter.
+	{
+		"name": "id",        // Makes value accesible via "{{parameters.id}}".
+		"type": "uinteger",  // Sets the type to unsigned integer.
+		"label": "User ID",  // Sets the user friendly label visible in the module.
+		"required": true     // Sets the parameter as mandatory.
+	}
+]

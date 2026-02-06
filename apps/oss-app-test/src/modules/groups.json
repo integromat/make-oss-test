@@ -1,0 +1,15 @@
+[
+	{
+		"label": "Other",
+		"modules": [
+			"getUsers",
+			"myModule",
+			"module1",
+			"CreateUser",
+			"myModule22",
+			"myModule3",
+			"myModule4",
+			"myModule6"
+		]
+	}
+]

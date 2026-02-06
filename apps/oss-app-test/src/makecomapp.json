@@ -1,0 +1,223 @@
+{
+    "fileVersion": 1,
+    "generalCodeFiles": {
+        "base": "general/base.iml.json",
+        "common": null,
+        "readme": "README.md",
+        "groups": "modules/groups.json"
+    },
+    "components": {
+        "connection": {
+            "connection1": {
+                "label": "con1",
+                "connectionType": "basic",
+                "codeFiles": {
+                    "communication": "connections/connection1/connection1.communication.iml.json",
+                    "params": "connections/connection1/connection1.params.iml.json",
+                    "common": null
+                }
+            },
+            "connection2": {
+                "label": "con2",
+                "connectionType": "basic",
+                "codeFiles": {
+                    "communication": "connections/connection2/connection2.communication.iml.json",
+                    "params": "connections/connection2/connection2.params.iml.json",
+                    "common": null
+                }
+            }
+        },
+        "module": {
+            "CreateUser": {
+                "label": "Create User",
+                "description": "Create user",
+                "moduleType": "action",
+                "actionCrud": "read",
+                "connection": "connection1",
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/create-user/create-user.communication.iml.json",
+                    "staticParams": "modules/create-user/create-user.static-params.iml.json",
+                    "mappableParams": "modules/create-user/create-user.mappable-params.iml.json",
+                    "interface": "modules/create-user/create-user.interface.iml.json",
+                    "samples": "modules/create-user/create-user.samples.iml.json",
+                    "scope": "modules/create-user/create-user.scope.iml.json"
+                }
+            },
+            "getUsers": {
+                "label": "Get Users",
+                "description": "Get user list",
+                "moduleType": "action",
+                "actionCrud": "read",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/get-users/get-users.communication.iml.json",
+                    "staticParams": "modules/get-users/get-users.static-params.iml.json",
+                    "mappableParams": "modules/get-users/get-users.mappable-params.iml.json",
+                    "interface": "modules/get-users/get-users.interface.iml.json",
+                    "samples": "modules/get-users/get-users.samples.iml.json",
+                    "scope": "modules/get-users/get-users.scope.iml.json"
+                }
+            },
+            "module1": {
+                "label": "My Module 1",
+                "description": "Some description",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/module1/module1.communication.iml.json",
+                    "staticParams": "modules/module1/module1.static-params.iml.json",
+                    "mappableParams": "modules/module1/module1.mappable-params.iml.json",
+                    "interface": "modules/module1/module1.interface.iml.json",
+                    "samples": "modules/module1/module1.samples.iml.json",
+                    "scope": "modules/module1/module1.scope.iml.json"
+                }
+            },
+            "myModule": {
+                "label": "My Module",
+                "description": "Some description",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/my-module/my-module.communication.iml.json",
+                    "staticParams": "modules/my-module/my-module.static-params.iml.json",
+                    "mappableParams": "modules/my-module/my-module.mappable-params.iml.json",
+                    "interface": "modules/my-module/my-module.interface.iml.json",
+                    "samples": "modules/my-module/my-module.samples.iml.json",
+                    "scope": "modules/my-module/my-module.scope.iml.json"
+                }
+            },
+            "myModule22": {
+                "label": "My Module 2",
+                "description": "Some description",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/my-module22/my-module22.communication.iml.json",
+                    "staticParams": "modules/my-module22/my-module22.static-params.iml.json",
+                    "mappableParams": "modules/my-module22/my-module22.mappable-params.iml.json",
+                    "interface": "modules/my-module22/my-module22.interface.iml.json",
+                    "samples": "modules/my-module22/my-module22.samples.iml.json",
+                    "scope": "modules/my-module22/my-module22.scope.iml.json"
+                }
+            },
+            "myModule3": {
+                "label": "My Module 3",
+                "description": "Some description",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/my-module3/my-module3.communication.iml.json",
+                    "staticParams": "modules/my-module3/my-module3.static-params.iml.json",
+                    "mappableParams": "modules/my-module3/my-module3.mappable-params.iml.json",
+                    "interface": "modules/my-module3/my-module3.interface.iml.json",
+                    "samples": "modules/my-module3/my-module3.samples.iml.json",
+                    "scope": "modules/my-module3/my-module3.scope.iml.json"
+                }
+            },
+            "myModule4": {
+                "label": "My Module 4",
+                "description": "Some description",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/my-module4/my-module4.communication.iml.json",
+                    "staticParams": "modules/my-module4/my-module4.static-params.iml.json",
+                    "mappableParams": "modules/my-module4/my-module4.mappable-params.iml.json",
+                    "interface": "modules/my-module4/my-module4.interface.iml.json",
+                    "samples": "modules/my-module4/my-module4.samples.iml.json",
+                    "scope": "modules/my-module4/my-module4.scope.iml.json"
+                }
+            },
+            "myModule6": {
+                "label": "My Module 6",
+                "description": "Some description",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": null,
+                "altConnection": null,
+                "webhook": null,
+                "codeFiles": {
+                    "communication": "modules/my-module6/my-module6.communication.iml.json",
+                    "staticParams": "modules/my-module6/my-module6.static-params.iml.json",
+                    "mappableParams": "modules/my-module6/my-module6.mappable-params.iml.json",
+                    "interface": "modules/my-module6/my-module6.interface.iml.json",
+                    "samples": "modules/my-module6/my-module6.samples.iml.json",
+                    "scope": "modules/my-module6/my-module6.scope.iml.json"
+                }
+            }
+        },
+        "function": {},
+        "rpc": {},
+        "webhook": {}
+    },
+    "origins": [
+        {
+            "label": "Origin",
+            "baseUrl": "https://eu1.make.com/api",
+            "appId": "oss-app-test",
+            "appVersion": 1,
+            "idMapping": {
+                "connection": [
+                    {
+                        "local": "connection1",
+                        "remote": "oss-app-test"
+                    },
+                    {
+                        "local": "connection2",
+                        "remote": "oss-app-test2"
+                    }
+                ],
+                "module": [
+                    {
+                        "local": "CreateUser",
+                        "remote": "CreateUser"
+                    },
+                    {
+                        "local": "getUsers",
+                        "remote": "getUsers"
+                    },
+                    {
+                        "local": "module1",
+                        "remote": "module1"
+                    },
+                    {
+                        "local": "myModule",
+                        "remote": "myModule"
+                    },
+                    {
+                        "local": "myModule22",
+                        "remote": "myModule22"
+                    },
+                    {
+                        "local": "myModule3",
+                        "remote": "myModule3"
+                    },
+                    {
+                        "local": "myModule4",
+                        "remote": "myModule4"
+                    },
+                    {
+                        "local": "myModule6",
+                        "remote": "myModule6"
+                    }
+                ],
+                "function": [],
+                "rpc": [],
+                "webhook": []
+            },
+            "apikeyFile": "../.secrets/apikey"
+        }
+    ]
+}

@@ -1,0 +1,110 @@
+name: Deploy Apps
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "apps/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-app.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
+      MAKE_HOST: ${{ secrets.MAKE_HOST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6
+        with:
+          registry-url: https://registry.npmjs.org
+          node-version: '>=20.0'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install Make CLI
+        run: npm install -g @integromat/make-cli@^2.4.7
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Determine apps to deploy
+        id: detect
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+        run: |
+          set -eo pipefail
+          apps=$(bash scripts/detect-changed-apps.sh)
+          if [ -z "$apps" ]; then
+            echo "No app changes detected."
+            echo "apps=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Apps changed: $apps"
+          echo "apps=$apps" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy changed apps
+        if: steps.detect.outputs.apps != ''
+        shell: bash
+        run: |
+          set -eo pipefail
+          for app in ${{ steps.detect.outputs.apps }}; do
+            echo "Deploying $app"
+            npx make-cli deploy --local-dir "$GITHUB_WORKSPACE/$app" --no-prompt
+          done
+
+      - name: Detect changes after deploy
+        id: changes
+        shell: bash
+        run: |
+          if [ -z "$(git status --porcelain apps)" ]; then
+            echo "No changes detected after deploy."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changes detected in apps/ after deploy."
+            git status --porcelain
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create or update PR for deployed changes
+        id: cpr
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676
+        with:
+          token: ${{ github.token }}
+          commit-message: "chore: update makecomapp.json after deploy"
+          title: "MAKE App deploy sync"
+          body: |
+            Automated synchronization of apps after deployment.
+            Make CLI generated changes in makecomapp.json during deployment.
+          branch: chore/make-app-deploy-sync
+          labels: |
+            automation
+            make-deploy-sync
+
+      - name: Auto-merge PR
+        if: steps.cpr.outputs.pull-request-operation == 'created' || steps.cpr.outputs.pull-request-operation == 'updated'
+        run: |
+          gh pr merge "${{ steps.cpr.outputs.pull-request-number }}" --merge --auto
+        env:
+          GH_TOKEN: ${{ github.token }}
