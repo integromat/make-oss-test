@@ -1,6 +1,6 @@
 {
 	// Request to API endpoint with parameter "id" defined in Mappable parameters.
-	"url": "/users/{{parameters.id}}",     // Relative to base URL
+	"url": "/users1/{{parameters.id}}",     // Relative to base URL
 	"method": "PUT",
 	"headers": {},                         // Additional HTTP headers
 	"qs": {},                              // Query string
