@@ -60,6 +60,22 @@
                     "scope": "modules/get-users/get-users.scope.iml.json"
                 }
             },
+            "getSegments": {
+                "label": "Get Segments",
+                "description": "Get segment list",
+                "moduleType": "action",
+                "actionCrud": "read",
+                "connection": null,
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/get-segments/get-segments.communication.iml.json",
+                    "staticParams": "modules/get-segments/get-segments.static-params.iml.json",
+                    "mappableParams": "modules/get-segments/get-segments.mappable-params.iml.json",
+                    "interface": "modules/get-segments/get-segments.interface.iml.json",
+                    "samples": "modules/get-segments/get-segments.samples.iml.json",
+                    "scope": "modules/get-segments/get-segments.scope.iml.json"
+                }
+            },
             "module1": {
                 "label": "My Module 1",
                 "description": "Some description",
@@ -187,6 +203,10 @@
                     {
                         "local": "getUsers",
                         "remote": "getUsers"
+                    },
+                    {
+                        "local": "getSegments",
+                        "remote": "getSegments"
                     },
                     {
                         "local": "module1",

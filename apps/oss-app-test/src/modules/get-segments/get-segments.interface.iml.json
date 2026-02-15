@@ -1,0 +1,22 @@
+[
+	{
+		"name": "id",
+		"type": "text",
+		"label": "Segment ID"
+	},
+	{
+		"name": "name",
+		"type": "text",
+		"label": "Segment Name"
+	},
+	{
+		"name": "description",
+		"type": "text",
+		"label": "Description"
+	},
+	{
+		"name": "created_at",
+		"type": "date",
+		"label": "Created At"
+	}
+]
