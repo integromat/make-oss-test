@@ -89,7 +89,6 @@ node scripts/validate-app.js apps/oss-app-test
 
 Three Cursor IDE commands exist in `.cursor/commands/` — inspect that directory for available AI-assisted workflows.
 
-## When in Plan Mode
-- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
-- Interview user in detail (for Claude: use the AskUserQuestionTool) about literally anything: technical implementation, UI & UX, concerns, tradeoffs, etc. but make sure the questions are not obvious. Be very in-depth and continue interviewing the user continually until it's complete. Use the answers to create a detailed spec.
-- Make assumptions explicit: When you must proceed under uncertainty, list assumptions up front and continue.
+## Keeping AGENTS.md current
+
+When your changes alter anything described in this file — project map, env vars, architectural patterns, API client behavior, error handling, test patterns, or packaging — notify the user that AGENTS.md should be updated and suggest the specific edit.
