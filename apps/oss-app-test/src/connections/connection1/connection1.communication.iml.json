@@ -1,6 +1,6 @@
 {
 	// Request
-	"url": "https://www.example.com/api/whoami",          // Absolute URL to the API endpoint which validates credentials
+	"url": "https://www.example2.com/api/whoami",          // Absolute URL to the API endpoint which validates credentials
 	"headers": {                                          // Additional HTTP headers
 		"Authorization": "Bearer {{parameters.apiKey}}"   // Authorizes user by API key, provided by user during the connection creation.
 	},
