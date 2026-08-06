@@ -1,0 +1,10 @@
+[
+	{
+		"name": "limit",
+		"type": "number",
+		"label": "Limit",
+		"help": "Maximum number of segments to return",
+		"default": 100,
+		"required": false
+	}
+]
